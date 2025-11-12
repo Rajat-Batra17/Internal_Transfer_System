@@ -5,6 +5,23 @@ It exposes RESTful HTTP APIs for creating accounts, checking balances, and proce
 
 ---
 
+## 🚀 Features
+
+- Create new accounts with an initial balance  
+- Fetch account balance by ID  
+- Transfer money between two accounts (with validation and atomic updates)  
+- PostgreSQL persistence using Docker  
+- Clean modular project structure (`internal/api`, `internal/store`, `cmd/server`)
+
+---
+## Prerequisites
+Make sure you have:
+- [Go 1.21+](https://go.dev/doc/install)
+- [Docker Desktop](https://www.docker.com/products/docker-desktop/)
+- `curl` (for testing HTTP endpoints)
+
+---
+
 ## ⚡ Quick Start (One Command)
 
 ```bash
@@ -21,55 +38,10 @@ Then in another terminal, test the API:
 ```bash
 bash scripts/test-api.sh
 ```
-
----
-
-## 🚀 Features
-
-- Create new accounts with an initial balance  
-- Fetch account balance by ID  
-- Transfer money between two accounts (with validation and atomic updates)  
-- PostgreSQL persistence using Docker  
-- Clean modular project structure (`internal/api`, `internal/store`, `cmd/server`)
-
----
-
-## 📋 Using Makefile (Recommended)
-
-```bash
-# See all available commands
-make help
-
-# One-command setup
-make setup
-
-# Run server
-make run
-
-# Test API endpoints
-make test-api
-
-# Run unit tests
-make test
-
-# Run integration tests (requires DB)
-make test-integration
-
-# Clean up (stop containers, remove .env)
-make clean
-```
-
 ---
 
 ## 🔧 Manual Setup Instructions
-
-### 1️⃣ Prerequisites
-Make sure you have:
-- [Go 1.21+](https://go.dev/doc/install)
-- [Docker Desktop](https://www.docker.com/products/docker-desktop/)
-- `curl` (for testing HTTP endpoints)
-
-### 2️⃣ Start PostgreSQL with Docker
+### 1️⃣ Start PostgreSQL with Docker
 
 ```bash
 docker compose up -d
@@ -80,7 +52,7 @@ This launches a Postgres 15 instance at port 5432 with default creds:
 - **password:** test
 - **database:** transfers
 
-### 3️⃣ Run Database Migrations
+### 2️⃣  Run Database Migrations
 
 ```bash
 CONTAINER=$(docker compose ps -q db)
@@ -88,7 +60,7 @@ docker cp migrations/0001_init.sql $CONTAINER:/tmp/0001_init.sql
 docker exec -it $CONTAINER psql -U test -d transfers -f /tmp/0001_init.sql
 ```
 
-### 4️⃣ Create `.env` File
+### 3️⃣  Create `.env` File
 
 ```bash
 cat > .env << EOF
@@ -98,7 +70,7 @@ REQ_TIMEOUT_SEC=10
 EOF
 ```
 
-### 5️⃣ Run the Server
+### 4️⃣  Run the Server
 
 ```bash
 go run ./cmd/server
@@ -139,26 +111,6 @@ curl http://localhost:8080/healthz
 
 ---
 
-## � Automated Testing
-
-Run all curl tests (server must be running):
-```bash
-bash scripts/test-api.sh
-```
-
-Or use Makefile:
-```bash
-make test-api
-```
-
-This script tests:
-- Account creation
-- Balance retrieval
-- Money transfers
-- Error handling (insufficient funds, invalid account)
-
----
-
 ## 📂 Project Structure
 
 ```
@@ -182,28 +134,32 @@ internal-transfers/
 
 ---
 
-## 🧩 Key Concepts
+## 📋 Using Makefile 
 
-**Atomic Transfers:** All transfers use database transactions with row-level locking to ensure consistency under concurrent load.
+```bash
+# See all available commands
+make help
 
-**Decimal Precision:** Uses `shopspring/decimal` and stores amounts as `NUMERIC(30,10)` to prevent floating-point errors.
+# One-command setup
+make setup
 
-**Error Handling:** Domain errors (insufficient funds, account not found) are mapped to appropriate HTTP status codes (409, 404, 500).
+# Run server
+make run
 
-**Request Timeouts:** All API requests have a configurable timeout (default 5s) to prevent hanging requests.
+# Test API endpoints
+make test-api
 
+# Run unit tests
+make test
+
+# Run integration tests (requires DB)
+make test-integration
+
+# Clean up (stop containers, remove .env)
+make clean
+```
 ---
 
-## 🧰 Tech Stack
-
-- **Language:** Go 1.21+
-- **Database:** PostgreSQL 15
-- **Libraries:** 
-  - [shopspring/decimal](https://github.com/shopspring/decimal) — Precise decimal arithmetic
-  - [gorilla/mux](https://github.com/gorilla/mux) — HTTP router
-  - [pgx](https://github.com/jackc/pgx) — PostgreSQL driver
-
----
 
 ## 🧼 Clean Up
 
@@ -217,6 +173,19 @@ Or manually:
 docker compose down
 rm .env
 ```
+
+---
+
+## 🧰 Tech Stack
+
+- **Language:** Go 1.21+
+- **Database:** PostgreSQL 15
+- **Libraries:** 
+  - [shopspring/decimal](https://github.com/shopspring/decimal) — Precise decimal arithmetic
+  - [gorilla/mux](https://github.com/gorilla/mux) — HTTP router
+  - [pgx](https://github.com/jackc/pgx) — PostgreSQL driver
+
+
 
 ---
 
